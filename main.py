@@ -15,7 +15,7 @@ import AS7262_Pi as spec
 
 #Setup Hardware
 spec.soft_reset()
-spec.gain(3)
+spec.set_gain(3)
 spec.set_integration_time(255) #X2.8ms
 spec.set_measurement_mode(3)
 
