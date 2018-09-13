@@ -17,8 +17,9 @@ import AS7262_Pi as spec
 #Setup Hardware
 spec.soft_reset()
 spec.set_gain(3)
-spec.set_integration_time(1) #X2.8ms
+spec.set_integration_time(100) #X2.8ms
 spec.set_measurement_mode(3)
+spec.enable_main_led()
 
 continuePlotting = False
 
