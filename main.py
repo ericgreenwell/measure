@@ -39,6 +39,9 @@ t = []
 global l
 l= []
 
+v = IntVar()
+v.set(1)
+
 def change_state():
     global continuePlotting
     if continuePlotting == True:
@@ -85,7 +88,7 @@ def app(channels):
 
     global color_val
     for color, color_val in channels:
-       radio = Radiobutton(root, text=color, value=color_val).pack(side=LEFT, padx=4, pady=5) #command = function called when radio button changed
+       radio = Radiobutton(root, text=color, variable=v, value=color_val).pack(side=LEFT, padx=4, pady=5) #command = function called when radio button changed
 
     Label(root, text="Port:", bg='gray').pack(side=LEFT)
     global port
