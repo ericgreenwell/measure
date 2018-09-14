@@ -2,7 +2,10 @@
 
 from Tkinter import *
 from random import randint
-
+#sudo easy_install pydaqflex
+#import daqflex
+#dev=daqflex.USB_204
+#print(dev)
 
 # these four imports are important
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -13,13 +16,14 @@ from serial import Serial
 
 from datetime import datetime
 import AS7262_Pi as spec
+import csv
 
 #Setup Hardware
 spec.soft_reset()
 spec.set_gain(3)
 spec.set_integration_time(100) #X2.8ms
 spec.set_measurement_mode(3)
-spec.enable_main_led()
+#spec.enable_main_led()
 
 continuePlotting = False
 
@@ -40,8 +44,14 @@ t = []
 global l
 l= []
 
-##v = IntVar()
-#v.set(1)
+def save_file():
+    f = tkFileDialog.asksaveasfile(mode='w', defaultextension=".csv")
+    if f is None:
+        return
+    for line in data:
+        f.write(str(line) + '\n')
+    f.close()
+
 
 def change_state():
     global continuePlotting
@@ -58,7 +68,6 @@ def data_points(start_time, l, t, v):
         #results = spec.get_calibrated_values()
         #elapsed_time = time.time() - start_time()
         elapsed_time = time.time()
-        #f = open("data.txt", "w")
         intensity = results[v]
         l.append(intensity)
         t.append(elapsed_time)
@@ -121,7 +130,7 @@ def app(channels):
         pass
 
     e = Button(root, text="Exit", command=root.destroy, bg="red").pack(side=RIGHT)
-    s = Button(root, text="Save", command=save, bg="blue", fg="white").pack(side=RIGHT)
+    s = Button(root, text="Save", command=save_file, bg="blue", fg="white").pack(side=RIGHT)
     b = Button(root, text="Start/Stop", command=gui_handler, bg="green", fg="white").pack(side=RIGHT)
 
 
