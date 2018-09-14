@@ -78,6 +78,16 @@ def data_points(start_time, l, t, v):
     except:
         return l, t 
 
+class Checkbar(Frame):
+    def __init__(self, parent=None, picks=[], side=LEFT, anchor=W):
+	Frame.__init__(self, parent)
+	self.vars= []
+	for pick in picks:
+	    var = IntVar()
+	    chk = Checkbutton(self, text=pick, variable=var)
+	    chk.pack(side=side, anchor=anchor, expand = YES)
+	    self.vars.append(var)
+
 def app(channels):
     # initialise a window.
     root = Tk()
@@ -102,8 +112,13 @@ def app(channels):
     graph.get_tk_widget().pack(side="top", fill='both', expand=True)
 
     global color_val
-    for color, color_val in channels:
-       radio = Radiobutton(root, text=color, variable=v, value=color_val).pack(side=LEFT, padx=4, pady=5) #command = function called when radio button changed
+    #for color, color_val in channels:
+       #radio = Radiobutton(root, text=color, variable=v, value=color_val).pack(side=LEFT, padx=4, pady=5) #command = function called when radio button changed
+	#w = Checkbutton(root, 
+    chan = Checkbar(root, channels)
+    chan.pack(side=LEFT)
+
+    print(list(chan.state()))
 
     Label(root, text="Port:", bg='gray').pack(side=LEFT)
     global port
