@@ -3,6 +3,7 @@
 from Tkinter import *
 from random import randint
 #sudo easy_install pydaqflex
+#pip install pydaqflex
 #import daqflex
 #dev=daqflex.USB_204
 #print(dev)
