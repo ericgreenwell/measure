@@ -112,13 +112,14 @@ def app(channels):
     graph.get_tk_widget().pack(side="top", fill='both', expand=True)
 
     global color_val
-    #for color, color_val in channels:
-       #radio = Radiobutton(root, text=color, variable=v, value=color_val).pack(side=LEFT, padx=4, pady=5) #command = function called when radio button changed
+    for color, color_val in channels:
+       radio = Radiobutton(root, text=color, variable=v, value=color_val).pack(side=LEFT, padx=4, pady=5) #command = function called when radio button changed
+	
 	#w = Checkbutton(root, 
-    chan = Checkbar(root, channels)
-    chan.pack(side=LEFT)
+    #chan = Checkbar(root, channels)
+    #chan.pack(side=LEFT)
 
-    print(list(chan.state()))
+    #print(list(chan.state()))
 
     Label(root, text="Port:", bg='gray').pack(side=LEFT)
     global port
@@ -141,9 +142,6 @@ def app(channels):
 	start_time = time.time()
 	change_state()
         threading.Thread(target=plotter).start()
-
-    def save():
-        pass
 
     e = Button(root, text="Exit", command=root.destroy, bg="red").pack(side=RIGHT)
     s = Button(root, text="Save", command=save_file, bg="blue", fg="white").pack(side=RIGHT)
