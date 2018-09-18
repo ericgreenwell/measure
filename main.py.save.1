@@ -2,10 +2,11 @@
 
 from Tkinter import *
 from random import randint
-import tkFileDialog
-import timeit
 #sudo easy_install pydaqflex
 #pip install pydaqflex
+#import daqflex
+#dev=daqflex.USB_204
+#print(dev)
 #import daqflex
 #dev=daqflex.USB_204
 #print(dev)
@@ -15,6 +16,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 import time
 import threading
+from serial import Serial
 
 from datetime import datetime
 import AS7262_Pi as spec
@@ -26,17 +28,17 @@ spec.set_gain(3)
 spec.set_integration_time(100) #X2.8ms
 spec.set_measurement_mode(3)
 #spec.enable_main_led()
-#spec.disable_main_led()
 
 continuePlotting = False
 
+#data = [1,2,3,4,5,6,7,8,8,9,2,4,2,66,4,3,2]
 channels = [
-    ("red", 0),
-    ("orange", 1),
-    ("yellow", 2),
-    ("green", 3),
-    ("blue", 4),
-    ("purple", 5)
+    ("Red", 0),
+    ("Orange", 1),
+    ("Yellow", 2),
+    ("Green", 3),
+    ("Blue", 4),
+    ("Violet", 5)
 ]
 #initialize variables
 c = 1
@@ -45,21 +47,13 @@ global t
 t = []
 global l
 l= []
-global start_time
-start_time= time.clock()
 
 def save_file():
     f = tkFileDialog.asksaveasfile(mode='w', defaultextension=".csv")
     if f is None:
         return
-    
-    f.write('AS7262 Channel Test: ' + str(channels[v.get()][0]) + '\n')
-    f.write('time date: \n')
-    f.write('time(s)   | intensity \n')
-
-    for line in l:
-        for time in t:
-            f.write(str(time) + '\t' + str(line) + '\n')
+    for line in data:
+        f.write(str(line) + '\n')
     f.close()
 
 
@@ -70,17 +64,22 @@ def change_state():
     else:
         continuePlotting = True
 
-def data_points(v):
+def data_points(start_time, l, t, v):
 
-    results = spec.take_single_measurement() #get_calibrated_value
-    global elapsed_time
-    elapsed_time = time.clock() - start_time
-    print('elapsed time, start_time: '+ str(elapsed_time) +','+ str(start_time))
-    intensity = results[v]
-    l.append(intensity)
-    t.append(elapsed_time)
+    results = spec.take_single_measurement() #get_calibrated_values()
+    
+    try:
+        #results = spec.get_calibrated_values()
+        #elapsed_time = time.time() - start_time()
+        elapsed_time = time.time()
+        intensity = results[v]
+        l.append(intensity)
+        t.append(elapsed_time)
        
-    return l, t, elapsed_time 
+        return l, t
+
+    except:
+        return l, t 
 
 class Checkbar(Frame):
     def __init__(self, parent=None, picks=[], side=LEFT, anchor=W):
@@ -116,14 +115,13 @@ def app(channels):
     graph.get_tk_widget().pack(side="top", fill='both', expand=True)
 
     global color_val
-    for color, color_val in channels:
-       radio = Radiobutton(root, text=color, variable=v, value=color_val).pack(side=LEFT, padx=4, pady=5) #command = function called when radio button changed
-	
+    #for color, color_val in channels:
+       #radio = Radiobutton(root, text=color, variable=v, value=color_val).pack(side=LEFT, padx=4, pady=5) #command = function called when radio button changed
 	#w = Checkbutton(root, 
-    #chan = Checkbar(root, channels)
-    #chan.pack(side=LEFT)
+    chan = Checkbar(root, channels)
+    chan.pack(side=LEFT)
 
-    #print(list(chan.state()))
+    print(list(chan.state()))
 
     Label(root, text="Port:", bg='gray').pack(side=LEFT)
     global port
@@ -135,30 +133,23 @@ def app(channels):
         while continuePlotting:
             ax.cla()
             ax.grid()
-            dpts = data_points(v.get())
-            ax.plot(t, l, color=channels[v.get()][0])
-            ax.set_xlabel('time(s)')
-	    ax.set_ylabel('intensity')
+            dpts = data_points(start_time, l, t, v.get())
+
+            #ax.plot(range(10), dpts, marker='o', color='orange')
+            ax.plot(l, color='black')#range(len(dpts)), dpts, marker='o', color='orange')
             graph.draw()
 
-    def clear_plot():
-        ax.cla()
-        ax.grid()
-        graph.draw()
-        l[:]= []
-        t[:]=[]
-	start_time = elapsed_time
-        print(start_time)
-	#print('cleared')
-        #return l, t, start_time
- 
     def gui_handler():
+        global start_time
+	start_time = time.time()
 	change_state()
         threading.Thread(target=plotter).start()
 
+    def save():
+        pass
+
     e = Button(root, text="Exit", command=root.destroy, bg="red").pack(side=RIGHT)
     s = Button(root, text="Save", command=save_file, bg="blue", fg="white").pack(side=RIGHT)
-    c = Button(root, text ='Clear', command = clear_plot, bg="orange").pack(side=RIGHT)
     b = Button(root, text="Start/Stop", command=gui_handler, bg="green", fg="white").pack(side=RIGHT)
 
 
