@@ -13,7 +13,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 import time
 import threading
-from serial import Serial
+#from serial import Serial
 
 from datetime import datetime
 import AS7262_Pi as spec
@@ -30,12 +30,12 @@ continuePlotting = False
 
 #data = [1,2,3,4,5,6,7,8,8,9,2,4,2,66,4,3,2]
 channels = [
-    ("Red", 0),
-    ("Orange", 1),
-    ("Yellow", 2),
-    ("Green", 3),
-    ("Blue", 4),
-    ("Violet", 5)
+    ("red", 0),
+    ("orange", 1),
+    ("yellow", 2),
+    ("green", 3),
+    ("blue", 4),
+    ("purple", 5)
 ]
 #initialize variables
 c = 1
@@ -134,7 +134,7 @@ def app(channels):
             dpts = data_points(start_time, l, t, v.get())
 
             #ax.plot(range(10), dpts, marker='o', color='orange')
-            ax.plot(l, color='black')#range(len(dpts)), dpts, marker='o', color='orange')
+            ax.plot(l, color= channels[color_val]) #'black')
             graph.draw()
 
     def gui_handler():
