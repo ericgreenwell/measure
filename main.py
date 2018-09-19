@@ -1,7 +1,6 @@
 #!/usr/bin/env/ python
 
 from Tkinter import *
-from random import randint
 import tkFileDialog
 import timeit
 #sudo easy_install pydaqflex
@@ -46,7 +45,7 @@ t = []
 global l
 l= []
 global start_time
-start_time= time.clock()
+start_time= time.time()
 
 def save_file():
     f = tkFileDialog.asksaveasfile(mode='w', defaultextension=".csv")
@@ -69,12 +68,13 @@ def change_state():
         continuePlotting = False
     else:
         continuePlotting = True
+	start_time = time.time()
 
 def data_points(v):
 
     results = spec.take_single_measurement() #get_calibrated_value
     global elapsed_time
-    elapsed_time = time.clock() - start_time
+    elapsed_time = time.time() - start_time
     print('elapsed time, start_time: '+ str(elapsed_time) +','+ str(start_time))
     intensity = results[v]
     l.append(intensity)
@@ -145,10 +145,11 @@ def app(channels):
         ax.cla()
         ax.grid()
         graph.draw()
-        l[:]= []
-        t[:]=[]
-	start_time = elapsed_time
-        print(start_time)
+        #del t[:]
+	l.clear()
+	t.clear()
+	#start_time = elapsed_time
+        #print(start_time)
 	#print('cleared')
         #return l, t, start_time
  
