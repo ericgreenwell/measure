@@ -55,10 +55,15 @@ def save_file():
     f.write('AS7262 Channel Test: ' + str(channels[v.get()][0]) + '\n')
     f.write('time date: \n')
     f.write('time(s)   | intensity \n')
+    global t
+    global l
 
     for line in l:
-        for time in t:
-            f.write(str(time) + '\t' + str(line) + '\n')
+        f.write(str(line) + '\n')
+
+    #for time in t:
+    #    for line in l:
+    #        f.write(str(time) + '\t' + str(line) + '\n')
     f.close()
 
 
@@ -68,19 +73,22 @@ def change_state():
         continuePlotting = False
     else:
         continuePlotting = True
+	global start_time
 	start_time = time.time()
 
 def data_points(v):
 
     results = spec.take_single_measurement() #get_calibrated_value
-    global elapsed_time
+    global start_time
     elapsed_time = time.time() - start_time
     print('elapsed time, start_time: '+ str(elapsed_time) +','+ str(start_time))
     intensity = results[v]
     l.append(intensity)
     t.append(elapsed_time)
+    print(l)
+    #print(t)
        
-    return l, t, elapsed_time 
+    return l #, t 
 
 class Checkbar(Frame):
     def __init__(self, parent=None, picks=[], side=LEFT, anchor=W):
@@ -145,9 +153,10 @@ def app(channels):
         ax.cla()
         ax.grid()
         graph.draw()
-        #del t[:]
-	l.clear()
-	t.clear()
+        del t[:]
+	del l[:] #l.clear()
+	return t, l
+	#t.clear()
 	#start_time = elapsed_time
         #print(start_time)
 	#print('cleared')
